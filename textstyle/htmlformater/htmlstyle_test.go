@@ -1,4 +1,4 @@
-package htmlstyle_test
+package htmlformater_test
 
 import (
 	"fmt"
@@ -9,15 +9,14 @@ import (
 
 	"github.com/muhqu/go-attributedtext"
 	"github.com/muhqu/go-attributedtext/textstyle"
-
-	"github.com/muhqu/go-attributedtext/htmlstyle"
+	"github.com/muhqu/go-attributedtext/textstyle/htmlformater"
 )
 
 func ExampleFormater() {
 
-	err := htmlstyle.Formater(textstyle.Red.ForegroundColor())
-	info := htmlstyle.Formater(textstyle.Yellow.ForegroundColor())
-	fatal := htmlstyle.Formater(textstyle.Red.ForegroundColor(), textstyle.Bold, textstyle.Underline, textstyle.White.BackgroundColor())
+	err := htmlformater.Formater(textstyle.Red.ForegroundColor())
+	info := htmlformater.Formater(textstyle.Yellow.ForegroundColor())
+	fatal := htmlformater.Formater(textstyle.Red.ForegroundColor(), textstyle.Bold, textstyle.Underline, textstyle.White.BackgroundColor())
 
 	fmt.Printf("%s\n", err("Hello"))
 	fmt.Printf("%s\n", info("World"))
@@ -71,24 +70,24 @@ func Hello (s string) string { // go Hello World!
 		return as
 	})
 	mapping := attributedtext.AttributeMapping{
-		token.FUNC:    attributedtext.Multi(textstyle.Yellow.ForegroundColor(), textstyle.Bold),
-		FUNC_IDENT:    attributedtext.Multi(textstyle.Yellow.ForegroundColor()),
-		PERIOD_IDENT:  attributedtext.Multi(textstyle.Magenta.ForegroundColor()),
-		token.RETURN:  attributedtext.Multi(textstyle.Yellow.ForegroundColor(), textstyle.Bold),
-		token.IDENT:   attributedtext.Multi(textstyle.White.ForegroundColor(), textstyle.Bold),
-		token.INT:     attributedtext.Multi(textstyle.Green.ForegroundColor()),
-		token.LBRACE:  attributedtext.Multi(textstyle.White.ForegroundColor(), textstyle.Bold),
-		token.RBRACE:  attributedtext.Multi(textstyle.White.ForegroundColor(), textstyle.Bold),
-		token.LPAREN:  attributedtext.Multi(textstyle.White.ForegroundColor(), textstyle.Bold),
-		token.RPAREN:  attributedtext.Multi(textstyle.White.ForegroundColor(), textstyle.Bold),
-		token.COMMENT: attributedtext.Multi(textstyle.Black.ForegroundColor(), textstyle.Bold),
-		token.STRING:  attributedtext.Multi(textstyle.Green.ForegroundColor()),
+		token.FUNC:    {textstyle.Yellow.ForegroundColor(), textstyle.Bold},
+		FUNC_IDENT:    {textstyle.Yellow.ForegroundColor()},
+		PERIOD_IDENT:  {textstyle.Magenta.ForegroundColor()},
+		token.RETURN:  {textstyle.Yellow.ForegroundColor(), textstyle.Bold},
+		token.IDENT:   {textstyle.White.ForegroundColor(), textstyle.Bold},
+		token.INT:     {textstyle.Green.ForegroundColor()},
+		token.LBRACE:  {textstyle.White.ForegroundColor(), textstyle.Bold},
+		token.RBRACE:  {textstyle.White.ForegroundColor(), textstyle.Bold},
+		token.LPAREN:  {textstyle.White.ForegroundColor(), textstyle.Bold},
+		token.RPAREN:  {textstyle.White.ForegroundColor(), textstyle.Bold},
+		token.COMMENT: {textstyle.Black.ForegroundColor(), textstyle.Bold},
+		token.STRING:  {textstyle.Green.ForegroundColor()},
 	}
 	mappingattributor := attributedtext.NewAttributeMappingAttributor(mapping)
 	attributor := attributedtext.NewMultiAttributor(goattributor, mappingattributor)
 
 	attributedStr := attributor.AttributeString(src)
-	htmlStr := htmlstyle.Format(attributedStr)
+	htmlStr := htmlformater.Format(attributedStr)
 
 	for _, line := range strings.Split(htmlStr, "\n") {
 		fmt.Printf("%s\n", line)

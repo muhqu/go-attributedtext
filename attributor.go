@@ -57,13 +57,15 @@ func NewMultiAttributor(m ...Attributor) Attributor {
 	})
 }
 
-type AttributeMapping map[Attribute]Attribute
+type AttributeMapping map[Attribute]Attributes
 
-func NewAttributeMappingAttributor(m map[Attribute]Attribute) Attributor {
+func NewAttributeMappingAttributor(m map[Attribute]Attributes) Attributor {
 	return NewAttributor(func(s *AttributedString) *AttributedString {
 		for _, aar := range s.Attrs {
-			if a, found := m[aar.Attribute]; found {
-				s.AddAttribute(aar.Index, aar.Length, a)
+			if as, found := m[aar.Attribute]; found {
+				for _, a := range as.Flatten() {
+					s.AddAttribute(aar.Index, aar.Length, a)
+				}
 			}
 		}
 		return s

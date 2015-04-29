@@ -1,4 +1,4 @@
-package ansistyle
+package ansiformater
 
 import (
 	"fmt"

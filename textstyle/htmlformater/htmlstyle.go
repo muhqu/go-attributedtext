@@ -1,4 +1,4 @@
-package htmlstyle
+package htmlformater
 
 import (
 	"fmt"

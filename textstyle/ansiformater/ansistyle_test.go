@@ -1,7 +1,8 @@
-package ansistyle_test
+package ansiformater_test
 
 import (
 	"fmt"
+	"log"
 	"regexp"
 	"strings"
 
@@ -9,15 +10,15 @@ import (
 	"go/token"
 
 	"github.com/muhqu/go-attributedtext"
-	"github.com/muhqu/go-attributedtext/ansistyle"
 	"github.com/muhqu/go-attributedtext/textstyle"
+	"github.com/muhqu/go-attributedtext/textstyle/ansiformater"
 )
 
 func ExampleFormater() {
 
-	err := ansistyle.Formater(textstyle.Red.ForegroundColor())
-	info := ansistyle.Formater(textstyle.Yellow.ForegroundColor())
-	fatal := ansistyle.Formater(textstyle.Red.ForegroundColor(), textstyle.Bold, textstyle.Underline, textstyle.White.BackgroundColor())
+	err := ansiformater.Formater(textstyle.Red.ForegroundColor())
+	info := ansiformater.Formater(textstyle.Yellow.ForegroundColor())
+	fatal := ansiformater.Formater(textstyle.Red.ForegroundColor(), textstyle.Bold, textstyle.Underline, textstyle.White.BackgroundColor())
 
 	fmt.Printf("%#v\n", err("Hello"))
 	fmt.Printf("%#v\n", info("World"))
@@ -36,7 +37,7 @@ func ExampleFormatedString() {
 	attrstr.AddAttribute(0, 4, &textstyle.ForegroundColor{textstyle.Red})
 	attrstr.AddAttribute(5, 7, textstyle.Underline|textstyle.Bold)
 
-	fmt.Printf("%#v\n", ansistyle.Format(attrstr))
+	fmt.Printf("%#v\n", ansiformater.Format(attrstr))
 
 	// Output:
 	//
@@ -54,19 +55,20 @@ func Example_1() {
 	exp2 := regexp.MustCompile(`(?P<ipaddress>[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})`)
 	regexattributor := attributedtext.NewRegexAttributor(exp1, exp2)
 	mapping := attributedtext.AttributeMapping{
-		"date":      attributedtext.Multi(textstyle.Italic),
-		"info":      attributedtext.Multi(textstyle.Green.ForegroundColor(), textstyle.Bold),
-		"error":     attributedtext.Multi(textstyle.Red.ForegroundColor(), textstyle.Bold),
-		"ipaddress": attributedtext.Multi(textstyle.Italic, textstyle.Cyan.ForegroundColor()),
+		"date":      {textstyle.Italic},
+		"info":      {textstyle.Green.ForegroundColor(), textstyle.Bold},
+		"error":     {textstyle.Red.ForegroundColor(), textstyle.Bold},
+		"ipaddress": {textstyle.Italic, textstyle.Cyan.ForegroundColor()},
 	}
 	mappingattributor := attributedtext.NewAttributeMappingAttributor(mapping)
 	attributor := attributedtext.NewMultiAttributor(regexattributor, mappingattributor)
 
 	attributedStr := attributor.AttributeString(str)
-	ansiColoredStr := ansistyle.Format(attributedStr)
+	ansiColoredStr := ansiformater.Format(attributedStr)
 
 	for _, line := range strings.Split(ansiColoredStr, "\n") {
 		fmt.Printf("%#v\n", line)
+		log.Printf("%s\n", line)
 	}
 
 	// Output:
@@ -117,24 +119,24 @@ func Hello (s string) string { // go Hello World!
 		return as
 	})
 	mapping := attributedtext.AttributeMapping{
-		token.FUNC:    attributedtext.Multi(textstyle.Yellow.ForegroundColor(), textstyle.Bold),
-		FUNC_IDENT:    attributedtext.Multi(textstyle.Yellow.ForegroundColor()),
-		PERIOD_IDENT:  attributedtext.Multi(textstyle.Magenta.ForegroundColor()),
-		token.RETURN:  attributedtext.Multi(textstyle.Yellow.ForegroundColor(), textstyle.Bold),
-		token.IDENT:   attributedtext.Multi(textstyle.White.ForegroundColor(), textstyle.Bold),
-		token.INT:     attributedtext.Multi(textstyle.Green.ForegroundColor()),
-		token.LBRACE:  attributedtext.Multi(textstyle.White.ForegroundColor(), textstyle.Bold),
-		token.RBRACE:  attributedtext.Multi(textstyle.White.ForegroundColor(), textstyle.Bold),
-		token.LPAREN:  attributedtext.Multi(textstyle.White.ForegroundColor(), textstyle.Bold),
-		token.RPAREN:  attributedtext.Multi(textstyle.White.ForegroundColor(), textstyle.Bold),
-		token.COMMENT: attributedtext.Multi(textstyle.Black.ForegroundColor(), textstyle.Bold),
-		token.STRING:  attributedtext.Multi(textstyle.Green.ForegroundColor()),
+		token.FUNC:    {textstyle.Yellow.ForegroundColor(), textstyle.Bold},
+		FUNC_IDENT:    {textstyle.Yellow.ForegroundColor()},
+		PERIOD_IDENT:  {textstyle.Magenta.ForegroundColor()},
+		token.RETURN:  {textstyle.Yellow.ForegroundColor(), textstyle.Bold},
+		token.IDENT:   {textstyle.White.ForegroundColor(), textstyle.Bold},
+		token.INT:     {textstyle.Green.ForegroundColor()},
+		token.LBRACE:  {textstyle.White.ForegroundColor(), textstyle.Bold},
+		token.RBRACE:  {textstyle.White.ForegroundColor(), textstyle.Bold},
+		token.LPAREN:  {textstyle.White.ForegroundColor(), textstyle.Bold},
+		token.RPAREN:  {textstyle.White.ForegroundColor(), textstyle.Bold},
+		token.COMMENT: {textstyle.Black.ForegroundColor(), textstyle.Bold},
+		token.STRING:  {textstyle.Green.ForegroundColor()},
 	}
 	mappingattributor := attributedtext.NewAttributeMappingAttributor(mapping)
 	attributor := attributedtext.NewMultiAttributor(goattributor, mappingattributor)
 
 	attributedStr := attributor.AttributeString(src)
-	ansiColoredStr := ansistyle.Format(attributedStr)
+	ansiColoredStr := ansiformater.Format(attributedStr)
 
 	for _, line := range strings.Split(ansiColoredStr, "\n") {
 		fmt.Printf("%#v\n", line)
