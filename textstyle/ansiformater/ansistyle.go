@@ -38,11 +38,11 @@ func AnsiStyleFromAttributes(attrs ...attributedtext.Attribute) *AnsiStyle {
 	for _, attr := range attrs {
 		switch attr := attr.(type) {
 		case *textstyle.ForegroundColor:
-			if c := ansiColorCode(attr.NamedColor); c >= 0 {
+			if c := AnsiColorCode(attr.NamedColor); c >= 0 {
 				a.ForegroundColorCode = c + 30
 			}
 		case *textstyle.BackgroundColor:
-			if c := ansiColorCode(attr.NamedColor); c >= 0 {
+			if c := AnsiColorCode(attr.NamedColor); c >= 0 {
 				a.BackgroundColorCode = c + 40
 			}
 		case textstyle.TextStyle:
@@ -60,7 +60,7 @@ func AnsiStyleFromAttributes(attrs ...attributedtext.Attribute) *AnsiStyle {
 	return a
 }
 
-func ansiColorCode(color textstyle.NamedColor) int {
+func AnsiColorCode(color textstyle.NamedColor) int {
 	switch color {
 	case textstyle.Black:
 		return 0
